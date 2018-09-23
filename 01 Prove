@@ -1,0 +1,52 @@
+#taken from ilearn page
+import numpy
+import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+
+#load data
+
+from sklearn import datasets
+iris = datasets.load_iris()
+
+# Show the data (the attributes of each instance)
+print(iris.data)
+
+# Show the target values (in numeric format) of each instance
+print(iris.target)
+
+# Show the actual target names that correspond to each number
+print(iris.target_names)
+
+#prepare training/test sets
+#used https://stats.stackexchange.com/questions/95797/how-to-split-the-dataset-for-cross-validation-learning-curve-and-final-evaluat
+data_train, data_test, targets_train, targets_test = train_test_split(iris.data, iris.target, test_size = .33, random_state = 0)
+
+#Use an existing algorithm to create a model
+#from ilearn
+classifier = GaussianNB()
+model = classifier.fit(data_train, targets_train)
+
+#Use that model to make predictions
+#from ilearn
+targets_predicted = model.predict(data_test)
+
+#Implement your own new "algorithm"
+class HardCodedClassifier():
+    def fit(self, data, target):
+        model = HardCodedModel()
+        return HardCodedModel
+
+class HardCodedModel():
+    def predict(self, data, target):
+        predictions = []
+        correct = 0
+        j = 0
+        for i in data:
+            predictions.append(0)
+            if predictions[j] == target[j]:
+                correct = correct + 1
+            j = j + 1
+        percentage = float(correct) / len(data)
+        #formatting from https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-36.php
+        print("{:.0%}".format(percentage))
