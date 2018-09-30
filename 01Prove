@@ -1,0 +1,107 @@
+# taken from iLearn page
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn import preprocessing
+from scipy.spatial import distance
+from collections import Counter
+
+
+# set variables
+K = 3
+
+# load data
+from sklearn import datasets
+iris = datasets.load_iris()
+
+# Show the data (the attributes of each instance)
+print(iris.data)
+
+# Scale iris data
+# from http://scikit-learn.org/stable/modules/preprocessing.html
+scaled_iris = preprocessing.scale(iris.data)
+
+# Show the target values (in numeric format) of each instance
+print(iris.target)
+
+# Show the actual target names that correspond to each number
+print(iris.target_names)
+
+# prepare training/test sets
+# https://stats.stackexchange.com/questions/95797/how-to-split-the-dataset
+# -for-cross-validation-learning-curve-and-final-evaluat
+data_train, data_test, targets_train, targets_test = train_test_split(scaled_iris, iris.target, test_size=.33, random_state=0)
+
+# Use an existing algorithm to create a model
+# from ilearn
+classifier = GaussianNB()
+model = classifier.fit(data_train, targets_train)
+
+# Use that model to make predictions
+# from iLearn
+targets_predicted = model.predict(data_test)
+print(targets_predicted)
+
+
+# Implement your own new "algorithm"
+class HardCodedClassifier:
+    neighbors = K
+    t_data = []
+    t_targets = []
+
+    def __init__(self, neighbors):
+        self.neighbors = neighbors
+
+    def fit(self, data, target):
+        # This is where training happens
+        t_data = data
+        t_targets = target
+        return HardCodedModel()
+
+
+class HardCodedModel:
+    def __init__(self):
+        return
+
+    def predict(self, data_test, target_test):
+        # this is where predicting happens
+        index = []
+        correct = 0
+        # iterate test data
+        for i in range(0, len(data_test)):
+            # Find nearest neighbors
+            # Iterate training data
+            for j in range(0, len(data_train)):
+                # Calculate distance between train and test data
+                dist = distance.euclidean(data_test[i], data_train[j])
+                # Loop index array
+                for k in range(0, K):
+                    index.append((dist, j))
+            # i don't really understand this one but i found it at
+            # https://stackoverflow.com/questions/22876410/how-to-sort-a-list-of-tuples-by-their-first-element
+            index.sort(key=lambda x: x[0])
+            # calculate predicted
+            neighbors = []
+            for j in range(0, K):
+                x, y = index[j]
+                neighbors.append(targets_train[y])
+                # counter for correct items
+            if most_common(neighbors) ==  target_test[i]:
+                correct = correct + 1
+        percentage = float(correct) / len(data_test)
+        # formatting from https://www.w3resource.com/python-exercises/string/python-data-type-string-exercise-36.php
+        print("{:.0%}".format(percentage))
+
+
+# got from https://stackoverflow.com/questions/1518522/find-the-most-common-element-in-a-list
+def most_common(lst):
+    data = Counter(lst)
+    return data.most_common(1)[0][0]
+
+
+myclassifier = HardCodedClassifier(3)
+mymodel = myclassifier.fit(data_train, targets_train)
+mymodel.predict(data_test, targets_test)
+
+# to find the mean and standard deviation use
+# std_scale = preprocessing.StandardScalar().fit(data)
+
